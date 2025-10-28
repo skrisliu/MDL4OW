@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>MDL4OW Open-Set Hyperspectral Image Classification. Few-shot Hyperspectral Image Classification With Unknown
+        Classes Using Multitask Deep Learning.</title>
+    <link rel="stylesheet" href="https://skrisliu.com/css/font.css">
+    <link rel="stylesheet" href="https://skrisliu.com/css/style.css">
+    <style>
+        .highlight2 {
+            padding: 1rem;
+            background-color: #e5e7eb;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="content">
+
+        <h2 class="content-title">
+            MDL4OW Few-shot Hyperspectral Image Classification With Unknown
+            Classes Using Multitask Deep Learning. 
+        </h2>
+
+        <h4>Open-Set Hyperspectral Image Classification. </h4>
+
+        <p class="content-meta">Source code and annotations for:</p>
+        <p class="highlight2">Shengjie Liu, Qian Shi, and Liangpei Zhang. Few-shot Hyperspectral Image Classification
+            With Unknown Classes Using Multitask Deep Learning. IEEE TGRS, 2020. <a
+                href="https://doi.org/10.1109/TGRS.2020.3018879" target="_blank">doi:10.1109/TGRS.2020.3018879</a></p>
+
+        <p class="content-meta">Contact: skrisliu AT gmail.com</p>
+
+        <p class="content-meta" style="font-size: 1.1em; text-align: left; margin: 1.5em 0;">
+            Code and annotations are released here, or check out <a href="https://github.com/skrisliu/MDL4OW"
+                target="_blank">https://github.com/skrisliu/MDL4OW</a>
+        </p>
+
+        <hr>
+        <h2>Overview</h2>
+        <h3>Ordinary: misclassify road, house, helicopter, and truck</h3>
+        <p>
+            Below is a normal/closed classification. If you are familiar with hyperspectral data, you will notice some
+            of the materials are not represented in the training samples. For example, for the upper image (Salinas
+            Valley), the road and the houses between farmlands cannot be classified into any of the known classes. But
+            still, a deep learning model has to assign one of the labels, because it is never taught to identify an
+            unknown instance.
+        </p>
+
+        <p>
+            <a href="im/mdl4ow1.png" target="_blank">
+                <img src="im/mdl4ow1.png" alt="ordinary classification" width="50%">
+            </a>
+        </p>
+
+        <h3>What we do: mask out the unknown in black</h3>
+        <p>
+            What we do here is, by using multitask deep learning, empowering the deep learning model with the ability to
+            identify the unknown: those masked with black color.<br>
+            For the upper image (Salinas Valley), the roads and houses between farmlands are successfully
+            identified.<br>
+            For the lower image (University of Pavia Campus), helicopters and trucks are successfully identified.
+        </p>
+
+        <p>
+            <a href="im/mdl4ow2.png" target="_blank">
+                <img src="im/mdl4ow2.png" alt="MDL4OW result" width="50%">
+            </a>
+        </p>
+
+        <hr>
+        <h3>Key packages</h3>
+        <pre class="highlight2">
+    tensorflow-gpu==1.9
+    keras==2.1.6
+    libmr
+    </pre>
+        <p>Tested on Python 3.6, Windows 10</p>
+        <p>Recommend Anaconda, Spyder</p>
+
+        <hr>
+        <h2>How to use</h2>
+        <h4>Hyperspectral satellite images</h4>
+        <p>The input image is with size of imx*imy*channel.</p>
+        <p>The satellite images are standard data, downloaded here: <a
+                href="http://www.ehu.eus/ccwintco/index.php/Hyperspectral_Remote_Sensing_Scenes"
+                target="_blank">http://www.ehu.eus/ccwintco/index.php/Hyperspectral_Remote_Sensing_Scenes</a></p>
+        <p>The above data is in matlab format, the numpy format can be found here (recommended):<br>
+            <a href="https://drive.google.com/file/d/1cEpTuP-trfRuphKWqKHjAaJhek5sqI3C/view?usp=sharing"
+                target="_blank">https://drive.google.com/file/d/1cEpTuP-trfRuphKWqKHjAaJhek5sqI3C/view?usp=sharing</a>
+        </p>
+
+        <h4>Quick usage</h4>
+        <p class="highlight2">python demo_salinas.py</p>
+
+        <h4>Arguments</h4>
+        <div class="highlight2">
+            <p><strong>Command-line Arguments:</strong></p>
+            <ul>
+                <li>
+                    <code>--nos</code>: Number of training samples per class<br>
+                    <small>20 for few-shot learning, 200 for many-shot learning</small>
+                </li>
+                <li>
+                    <code>--key</code>: Dataset name<br>
+                    <small>Options: <code>'salinas'</code>, <code>'paviaU'</code>, <code>'indian'</code></small>
+                </li>
+                <li>
+                    <code>--gt</code>: Path to ground truth file
+                </li>
+                <li>
+                    <code>--closs</code>: Classification loss weight<br>
+                    <small>Default: <code>50</code> (equivalent to 0.5 in normalized scale)</small>
+                </li>
+                <li>
+                    <code>--patience</code>: Early stopping patience<br>
+                    <small>Stop training if loss doesn't decrease for <code>{patience}</code> consecutive epochs</small>
+                </li>
+                <li>
+                    <code>--output</code>: Directory path to save output files<br>
+                    <small>Includes: trained model, prediction probabilities, predicted labels, reconstruction
+                        loss</small>
+                </li>
+                <li>
+                    <code>--showmap</code>: Save classification map as image<br>
+                    <small>When enabled, generates and saves the predicted label map visualization</small>
+                </li>
+            </ul>
+        </div>
+
+        <hr>
+        <h3>Evaluation code updated on 18 May 2021</h3>
+        <p>When using the evaluation code "<code>z20210518a_readoa.py</code>", you should change the parameter
+            "<code>mode</code>" for different settings. The inputs are output files from the training script.</p>
+
+        <h4>Mode</h4>
+        <div class="highlight2">
+            <p><strong>Mode Selection:</strong></p>
+            <ul>
+                <li><code>mode == 0</code>: Closed-set classification</li>
+                <li><code>mode == 1</code>: MDL4OW (Minimum Distance to Learned Open-set Weights)</li>
+                <li><code>mode == 2</code>: MDL4OW/C (with confidence calibration)</li>
+                <li><code>mode == 3</code>: Closed-set with probability output</li>
+                <li><code>mode == 4</code>: Softmax with threshold</li>
+                <li><code>mode == 5</code>: OpenMax (for open-set recognition)</li>
+            </ul>
+        </div>
+
+    </div>
+
+</body>
+
+</html>
